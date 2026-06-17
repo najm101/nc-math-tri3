@@ -1255,18 +1255,38 @@ function gLawSinesAngle(){
 }
 
 function gLawCosines(){
-  const p=ri(8,30),q=ri(8,30);const ang=ri(25,140);
-  // C=(0,0), A=(q,0) [CA=q], B=(p cos, p sin) [CB=p]; find AB
-  const P={C:[0,0],A:[q,0],B:[p*Math.cos(ang*DEG),p*Math.sin(ang*DEG)]};
-  const AB=Math.sqrt(p*p+q*q-2*p*q*Math.cos(ang*DEG));
-  const dia=svgTri(P,{verts:[{at:'A',text:'A'},{at:'B',text:'B'},{at:'C',text:'C'}],
-    angles:[{at:'C',text:ang+'°'}],
-    sides:[{a:'C',b:'A',text:String(q)},{a:'C',b:'B',text:String(p)},{a:'A',b:'B',text:'?'}]});
-  return {tag:'Law of Cosines',
-    prompt:`Find <b>AB</b> to the nearest tenth.`,
-    diagram:dia,type:'num',answer:AB,tol:0.2,unit:'',
-    given:`CA = ${q} · CB = ${p} · m∠C = ${ang}°`,
-    solution:`<code>AB² = ${q}² + ${p}² − 2(${q})(${p})cos(${ang}°)</code> = <code>${r2(AB*AB)}</code> → <code>AB = <span class="ans">${r1(AB)}</span></code>`};
+  // ── SSS: all three sides known; find a random angle (rearranged form) ──────
+  let a,b,c;
+  do { a=ri(9,28); b=ri(9,28); c=ri(9,28); }
+  while(Math.min(a+b-c, a+c-b, b+c-a) < 3);   // valid, non-degenerate triangle
+  const target = pick(['A','B','C']);
+  const sideLen = {a, b, c};
+  const lc = target.toLowerCase();
+  const opp = sideLen[lc];                                  // side opposite the target angle
+  const adj = ['a','b','c'].filter(x=>x!==lc);
+  const adj1 = sideLen[adj[0]], adj2 = sideLen[adj[1]];
+  const cosV = (adj1*adj1 + adj2*adj2 - opp*opp) / (2*adj1*adj2);
+  const angV = Math.acos(Math.max(-1,Math.min(1,cosV)))/DEG;
+  // draw the actual triangle: A=(0,0), B=(c,0), C placed so AC=b, BC=a
+  const Cx = (b*b + c*c - a*a) / (2*c);
+  const Cy = Math.sqrt(Math.max(b*b - Cx*Cx, 0));
+  const Pmap = {A:[0,0], B:[c,0], C:[Cx,Cy]};
+  const dia = svgTri(Pmap,{
+    verts:[{at:'A',text:'A'},{at:'B',text:'B'},{at:'C',text:'C'}],
+    angles:[{at:target,text:'?'}],
+    sides:[
+      {a:'A',b:'B',text:String(c)},   // AB = c
+      {a:'A',b:'C',text:String(b)},   // AC = b
+      {a:'B',b:'C',text:String(a)}    // BC = a
+    ]});
+  return {tag:'Law of Cosines \u00b7 find an angle',
+    prompt:`Find <b>m\u2220${target}</b> to the nearest tenth of a degree.`,
+    diagram:dia,type:'num',answer:angV,tol:0.2,unit:'\u00b0',
+    given:`a = ${a} \u00b7 b = ${b} \u00b7 c = ${c}`,
+    solution:`All three sides are known, so rearrange the Law of Cosines to solve for the angle. `
+      +`\u2220${target} is opposite side ${lc} (= ${opp}):<br>`
+      +`<code>cos ${target} = (${adj1}\u00b2 + ${adj2}\u00b2 \u2212 ${opp}\u00b2) / (2\u00b7${adj1}\u00b7${adj2}) = ${r2(cosV)}</code> \u2192 `
+      +`<code>m\u2220${target} = cos\u207b\u00b9(${r2(cosV)}) = <span class="ans">${r1(angV)}\u00b0</span></code>`};
 }
 
 function gArea(){
