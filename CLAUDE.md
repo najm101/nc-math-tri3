@@ -4,6 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
+
 A single self-contained HTML page — the **Tri.3 Practice Lab** — an infinite-question
 math practice/quiz app for NCS Grade 9 (trigonometry, circles, 3-D coordinates).
 Everything (markup, CSS, JS) lives in one file: **`index.html`** (originally
