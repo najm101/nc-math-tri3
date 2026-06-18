@@ -6,9 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A single self-contained HTML page — the **Tri.3 Practice Lab** — an infinite-question
 math practice/quiz app for NCS Grade 9 (trigonometry, circles, 3-D coordinates).
-Everything (markup, CSS, JS) lives in one file: **`index`** (no extension; it was
-renamed from `tri3-practice-4-quiz-aligned.html`). There is no build step, no
-framework, no dependencies beyond Google Fonts loaded over CDN.
+Everything (markup, CSS, JS) lives in one file: **`index.html`** (originally
+`tri3-practice-4-quiz-aligned.html`). There is no build step, no framework, no
+dependencies beyond Google Fonts loaded over CDN.
 
 `refrence-docs/` holds the source PDFs (`quizes.pdf`, `practice-sheet.pdf`) the
 question bank is modeled on — consult them when adjusting question content or
@@ -16,11 +16,9 @@ difficulty to keep the app aligned with the actual curriculum.
 
 ## Running / deploying
 
-- **Local:** open `index` in a browser, or serve the directory (e.g. `python3 -m http.server`).
-  Because the file has no `.html` extension, opening via a static server may serve it
-  as `application/octet-stream`; rename to `index.html` locally if a browser won't render it.
-- **Container:** `Dockerfile` copies the repo into `nginx:alpine` at `/usr/share/nginx/html`
-  and serves on port 80. `docker build -t tri3 . && docker run -p 8080:80 tri3`.
+- **Local:** open `index.html` in a browser, or serve the directory (e.g. `python3 -m http.server`).
+- **Hosting:** GitHub Pages, served from the `main` branch root. The entry file must be
+  named `index.html` so Pages serves it at the site root — a bare `index` returns a 404.
 - No tests, no linter, no package manager. Verification is manual: open the page and
   exercise the relevant topic generator.
 
@@ -82,4 +80,4 @@ Enter-key submission is wired per input type inside `buildAnswer()`.
   in **math coords (y-up)**; `svgTri` flips to screen space.
 - Short helper names are idiomatic here: `ri` (random int), `pick`, `r1`/`r2` (round to
   1/2 dp), `$` (getElementById). Match this terseness in generators.
-- Keep everything in the one `index` file — there is no module system.
+- Keep everything in the one `index.html` file — there is no module system.
