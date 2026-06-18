@@ -356,6 +356,92 @@
   .nav{animation-delay:.04s}.stats{animation-delay:.09s}.ltabs{animation-delay:.14s}
   .topics-head{animation-delay:.18s}.chips{animation-delay:.21s}#practicePage .card{animation-delay:.26s}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ============ Exam Prep mode ============ */
+  /* start screen */
+  .exam-h{font-family:'Fraunces',sans-serif;font-weight:900;font-size:24px;margin:0 0 8px;color:var(--ink)}
+  .exam-p{font-size:14.5px;line-height:1.7;color:var(--ink-soft);margin:0 0 14px;max-width:60ch}
+  .exam-last{font-family:'Space Mono',monospace;font-size:12.5px;color:var(--ink-soft);
+    background:var(--paper);border:1px solid var(--grid);border-radius:10px;padding:9px 12px;margin-bottom:14px}
+  #examStartBtn{min-width:180px}
+
+  /* immersive running view */
+  body.exam-running header,body.exam-running .nav,
+  body.exam-running #practicePage,body.exam-running #historyPage{display:none!important}
+  body.exam-running .wrap{max-width:none;padding:0}
+  #examRun{position:fixed;inset:0;z-index:60;background:var(--paper);flex-direction:column}
+  .exam-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:12px 18px;border-bottom:2px solid var(--line);background:var(--card);flex:0 0 auto}
+  .exam-bar-left{flex:1;min-width:0}
+  .exam-progress-text{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.04em;
+    color:var(--ink-soft);margin-bottom:6px;text-transform:uppercase}
+  .exam-progress-track{height:8px;background:#E3D7C0;border-radius:6px;overflow:hidden;max-width:420px}
+  .exam-progress-fill{height:100%;width:0;background:var(--blue);border-radius:6px;transition:width .3s}
+  .exam-bar-right{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+  .exam-timer{font-family:'Space Mono',monospace;font-weight:700;font-size:17px;color:var(--ink);
+    background:var(--paper);border:1px solid var(--grid);border-radius:8px;padding:5px 11px}
+  .exam-exit{padding:8px 14px}
+  .exam-stage{flex:1 1 auto;overflow-y:auto;padding:20px 16px 64px;display:flex;justify-content:center}
+  .exam-stage .card{width:100%;max-width:720px;align-self:flex-start}
+
+  /* results */
+  .exam-result-head{margin-bottom:14px}
+  .exam-result-score{font-family:'Fraunces',sans-serif;font-weight:700;font-size:16px;color:var(--ink-soft)}
+  .exam-result-score #examScore{font-weight:900;font-size:34px;color:var(--ink);margin-left:6px}
+  .exam-result-score #examScore small{font-size:18px;color:var(--muted);font-weight:600}
+  .exam-result-sub{font-family:'Space Mono',monospace;font-size:13px;color:var(--ink-soft);margin-top:4px}
+  .exam-result-sub span{color:var(--blue-dk);font-weight:700}
+  .exam-review-title,.exam-hist-title{font-family:'Fraunces',sans-serif;font-weight:700;font-size:17px;margin:6px 0 12px}
+  .exam-result-actions{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+  .exam-result-actions .btn{flex:1;min-width:150px}
+
+  /* analysis block */
+  .exam-verdict{font-family:'Fraunces',sans-serif;font-weight:700;font-size:16px;border-radius:12px;
+    padding:11px 14px;margin-bottom:12px;border:1px solid}
+  .exam-verdict.good{background:var(--ok-tint);border-color:#bcdcb0;color:var(--ok)}
+  .exam-verdict.flat{background:var(--blue-tint);border-color:#c5cdf2;color:var(--blue-dk)}
+  .exam-verdict.warn{background:var(--bad-tint);border-color:#eccbb8;color:var(--bad)}
+  .exam-analysis-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .exam-an-card{flex:1 1 240px;border-radius:12px;padding:11px 13px;border:1px solid}
+  .exam-an-card.warn{background:var(--bad-tint);border-color:#eccbb8}
+  .exam-an-card.good{background:var(--ok-tint);border-color:#bcdcb0}
+  .exam-an-k{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    font-weight:700;margin-bottom:8px}
+  .exam-an-card.warn .exam-an-k{color:var(--bad)}
+  .exam-an-card.good .exam-an-k{color:var(--ok)}
+  .exam-weak-row{display:flex;align-items:center;gap:9px;padding:5px 0;border-top:1px solid rgba(0,0,0,.06)}
+  .exam-weak-row:first-of-type{border-top:none}
+  .exam-weak-name{flex:1;font-size:13.5px;color:var(--ink);font-weight:600}
+  .exam-weak-score{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--bad)}
+  .exam-practice{background:var(--card);border:1px solid var(--bad);color:var(--bad);
+    font-family:'Space Mono',monospace;font-size:11px;border-radius:999px;padding:4px 10px;cursor:pointer;white-space:nowrap}
+  .exam-practice:hover{background:var(--bad);color:#fff}
+  .exam-strong-wrap{display:flex;flex-wrap:wrap;gap:6px}
+  .exam-strong-chip{font-family:'Space Mono',monospace;font-size:11.5px;background:var(--card);
+    border:1px solid #bcdcb0;color:var(--ok);border-radius:999px;padding:4px 10px}
+  .exam-allgood{font-size:13.5px;color:var(--ok);font-weight:600}
+  .exam-muted{color:var(--muted);font-size:13px}
+
+  /* history: prep-exam cards */
+  .exam-hist-sec{margin-bottom:18px}
+  .exam-card{background:var(--card);border:1px solid var(--grid);border-radius:14px;box-shadow:var(--shadow);
+    padding:13px 15px;margin-bottom:11px}
+  .exam-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .exam-card-score{font-family:'Fraunces',sans-serif;font-weight:900;font-size:19px;color:var(--ink)}
+  .exam-card-pct{font-size:14px;margin-left:6px}
+  .exam-card-meta{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-top:3px}
+  .exam-card-toggle{background:var(--card);border:1px solid var(--grid);color:var(--ink-soft);
+    font-family:'Space Mono',monospace;font-size:11.5px;border-radius:8px;padding:6px 11px;cursor:pointer;white-space:nowrap}
+  .exam-card-toggle:hover{border-color:var(--blue);color:var(--blue-dk)}
+  .exam-card-body{margin-top:13px}
+  .exam-card-body .dash{margin-bottom:12px}
+
+  @media (max-width:600px){
+    .exam-bar{padding:10px 13px}
+    .exam-stage{padding:16px 12px 56px}
+    .exam-timer{font-size:15px}
+    .exam-result-actions .btn{width:100%}
+  }
 </style>
 </head>
 <body>
@@ -368,6 +454,7 @@
 
   <div class="nav">
     <button class="navbtn on" id="navPractice">Practice</button>
+    <button class="navbtn" id="navExam">Exam prep</button>
     <button class="navbtn" id="navHistory">History (<span id="histCount">0</span>)</button>
     <button class="navbtn" id="navRules">Rules</button>
     <button class="navbtn" id="navSSA">SSA explorer</button>
@@ -418,9 +505,77 @@
         <button class="btn btn-ghost histsmall danger" id="resetBtn">Reset</button>
       </div>
     </div>
+    <div class="exam-hist-sec">
+      <div class="exam-hist-title">Prep exams</div>
+      <div id="examHistEmpty" class="hist-empty">No prep exams yet — take one from the “Exam prep” tab.</div>
+      <div id="examHistoryList"></div>
+    </div>
     <div id="historyDash" class="dash" style="display:none"></div>
     <div id="historyEmpty" class="hist-empty">No questions solved yet — answer some questions and they'll be saved here automatically, and they'll still be here after you close and reopen the file.</div>
     <div id="historyList"></div>
+  </div>
+
+  <div id="examPage" style="display:none">
+    <!-- start -->
+    <div id="examStart">
+      <div class="card">
+        <div class="qbody">
+          <h2 class="exam-h">Exam Prep</h2>
+          <p class="exam-p">A full, exam-style run that covers <b>every topic</b> from the Tri.3 practice
+            sheet — about <b><span id="examCount">26</span> questions</b> in practice-sheet order, roughly
+            25&nbsp;minutes. There are <b>no hints while you work</b>; you get your score, a per-lesson
+            breakdown, and a “what to practise next” analysis at the end.</p>
+          <div class="exam-last" id="examLast"></div>
+          <button class="btn btn-primary" id="examStartBtn">Start exam →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- running (immersive) -->
+    <div id="examRun" style="display:none">
+      <div class="exam-bar">
+        <div class="exam-bar-left">
+          <div class="exam-progress-text" id="examProgressText">Question 1 / 26</div>
+          <div class="exam-progress-track"><div class="exam-progress-fill" id="examProgressFill"></div></div>
+        </div>
+        <div class="exam-bar-right">
+          <span class="exam-timer" id="examTimer">0:00</span>
+          <button class="btn btn-ghost exam-exit" id="examExitBtn">Exit</button>
+        </div>
+      </div>
+      <div class="exam-stage">
+        <div class="card">
+          <div class="qhead">
+            <span class="qtag" id="examTag">—</span>
+            <span class="qnum" id="examSection"></span>
+          </div>
+          <div class="qbody">
+            <p class="prompt" id="examPrompt">Loading…</p>
+            <div class="diagram" id="examDiagram"></div>
+            <div class="given" id="examGiven" style="display:none"></div>
+            <div id="examAnswerArea"></div>
+            <div class="controls"><button class="btn btn-primary" id="examNextBtn">Next →</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- results -->
+    <div id="examResults" style="display:none">
+      <div class="card exam-result-head">
+        <div class="qbody">
+          <div class="exam-result-score">Score <span id="examScore">0<small> / 0</small></span></div>
+          <div class="exam-result-sub"><span id="examScorePct">—</span> accuracy · <span id="examScoreTime">0:00</span> taken</div>
+        </div>
+      </div>
+      <div class="dash" id="examAnalysis"></div>
+      <div class="exam-review-title">Question review</div>
+      <div id="examReview"></div>
+      <div class="exam-result-actions">
+        <button class="btn btn-primary" id="examRetakeBtn">Retake exam</button>
+        <button class="btn btn-ghost" id="examBackBtn">Back to practice</button>
+      </div>
+    </div>
   </div>
 
   <div class="modal-overlay" id="rulesModal" style="display:none">
@@ -1481,11 +1636,12 @@ function lessonTopics(id){const L=LESSONS.find(l=>l.id===id);return L?L.topics.s
 let q=null, answered=false, choiceSel=-1, recorded=false;
 let correct=0, attempted=0, streak=0, qcount=0;
 let history=[], historyShown=false;
+let examHistory=[];
 
 /* ---------- persistence: browser localStorage, survives reloads & restarts ---------- */
 const STORE_KEY='tri3lab_v1';
 function saveState(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify({correct,attempted,qcount,history})); }catch(e){}
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({correct,attempted,qcount,history,examHistory})); }catch(e){}
 }
 function loadState(){
   try{
@@ -1493,6 +1649,7 @@ function loadState(){
     const d=JSON.parse(raw)||{};
     correct=d.correct||0; attempted=d.attempted||0; qcount=d.qcount||0;
     history=Array.isArray(d.history)?d.history:[];
+    examHistory=Array.isArray(d.examHistory)?d.examHistory:[];
   }catch(e){}
 }
 function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -1639,66 +1796,85 @@ function newQuestion(){
   saveState();
 }
 
-function buildAnswer(){
-  ansArea.innerHTML='';
-  if(q.type==='num'||q.type==='expr'){
+/* Build the input UI for a question inside an arbitrary container (container-scoped,
+   class-based) so both Practice and Exam mode can reuse it. onEnter (optional) fires when
+   the user presses Enter in a text field. */
+function buildAnswerInto(qObj, container, onEnter){
+  container.innerHTML='';
+  container.dataset.sel='';
+  delete container.dataset.locked;
+  const enter=e=>{if(e.key==='Enter'&&onEnter)onEnter();};
+  if(qObj.type==='num'||qObj.type==='expr'){
     const row=document.createElement('div');row.className='answer-row';
     row.innerHTML=`<div class="field"><label>YOUR ANSWER</label>
-      <input type="text" id="ans" inputmode="text" autocomplete="off" placeholder="${q.type==='expr'?'e.g. 3√2 or 4.24':'type a number'}"></div>
-      ${q.unit?`<span class="unit">${q.unit}</span>`:''}`;
-    ansArea.appendChild(row);
-    if(q.type==='expr'){const h=document.createElement('div');h.className='hint-radical';
-      h.textContent='Exact forms accepted: type √ as "sqrt" if needed, e.g. 4sqrt15';ansArea.appendChild(h);}
-    $('ans').addEventListener('keydown',e=>{if(e.key==='Enter')check();});
-    $('ans').focus();
-  } else if(q.type==='frac'){
+      <input type="text" class="ans-input" inputmode="text" autocomplete="off" placeholder="${qObj.type==='expr'?'e.g. 3√2 or 4.24':'type a number'}"></div>
+      ${qObj.unit?`<span class="unit">${qObj.unit}</span>`:''}`;
+    container.appendChild(row);
+    if(qObj.type==='expr'){const h=document.createElement('div');h.className='hint-radical';
+      h.textContent='Exact forms accepted: type √ as "sqrt" if needed, e.g. 4sqrt15';container.appendChild(h);}
+    const inp=container.querySelector('.ans-input');inp.addEventListener('keydown',enter);inp.focus();
+  } else if(qObj.type==='frac'){
     const wrap=document.createElement('div');wrap.className='frac';
-    wrap.innerHTML=`<div class="field" style="max-width:130px"><label>NUMERATOR</label><input type="text" id="fnum" inputmode="numeric" placeholder="n"></div>
+    wrap.innerHTML=`<div class="field" style="max-width:130px"><label>NUMERATOR</label><input type="text" class="frac-num" inputmode="numeric" placeholder="n"></div>
       <span class="bar">π /</span>
-      <div class="field" style="max-width:130px"><label>DENOMINATOR</label><input type="text" id="fden" inputmode="numeric" placeholder="d"></div>`;
-    ansArea.appendChild(wrap);
-    ['fnum','fden'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')check();}));
-    $('fnum').focus();
-  } else if(q.type==='triple'){
+      <div class="field" style="max-width:130px"><label>DENOMINATOR</label><input type="text" class="frac-den" inputmode="numeric" placeholder="d"></div>`;
+    container.appendChild(wrap);
+    container.querySelectorAll('.frac-num,.frac-den').forEach(i=>i.addEventListener('keydown',enter));
+    container.querySelector('.frac-num').focus();
+  } else if(qObj.type==='triple'){
     const wrap=document.createElement('div');wrap.className='triple';
-    wrap.innerHTML=q.labels.map((l,i)=>`<div class="field"><label>${l.toUpperCase()}</label><input type="text" id="t${i}" inputmode="text" placeholder="${l}"></div>`).join('');
-    ansArea.appendChild(wrap);
-    q.labels.forEach((l,i)=>$('t'+i).addEventListener('keydown',e=>{if(e.key==='Enter')check();}));
-    $('t0').focus();
-  } else if(q.type==='choice'){
+    wrap.innerHTML=qObj.labels.map((l,i)=>`<div class="field"><label>${l.toUpperCase()}</label><input type="text" class="triple-input" data-i="${i}" inputmode="text" placeholder="${l}"></div>`).join('');
+    container.appendChild(wrap);
+    container.querySelectorAll('.triple-input').forEach(i=>i.addEventListener('keydown',enter));
+    container.querySelector('.triple-input').focus();
+  } else if(qObj.type==='choice'){
     const wrap=document.createElement('div');wrap.className='choices';
-    q.options.forEach((o,i)=>{
+    qObj.options.forEach((o,i)=>{
       const b=document.createElement('div');b.className='choice';b.textContent=o;
-      b.onclick=()=>{if(answered)return;choiceSel=i;[...wrap.children].forEach(c=>c.classList.remove('sel'));b.classList.add('sel');};
+      b.onclick=()=>{if(container.dataset.locked)return;container.dataset.sel=i;[...wrap.children].forEach(c=>c.classList.remove('sel'));b.classList.add('sel');};
       wrap.appendChild(b);
     });
-    ansArea.appendChild(wrap);
+    container.appendChild(wrap);
   }
 }
+
+/* Grade the answer currently typed into container. Pure: returns {ok, your}, no DOM/state change. */
+function gradeAnswer(qObj, container){
+  let ok=false, your='';
+  if(qObj.type==='num'||qObj.type==='expr'){
+    const raw=container.querySelector('.ans-input').value;your=raw;
+    ok=within(evalExpr(raw),qObj.answer,qObj.tol);
+  } else if(qObj.type==='frac'){
+    const n=parseInt(container.querySelector('.frac-num').value,10),d=parseInt(container.querySelector('.frac-den').value,10);
+    your=`${n}π/${d}`;
+    if(!isNaN(n)&&!isNaN(d)&&d!==0){const[rn,rd]=reduceFrac(n,d);const[an,ad]=reduceFrac(qObj.num,qObj.den);ok=(rn===an&&rd===ad);}
+  } else if(qObj.type==='triple'){
+    ok=true;const vals=[];
+    qObj.answers.forEach((a,i)=>{const v=evalExpr(container.querySelector('.triple-input[data-i="'+i+'"]').value);vals.push(v);if(!within(v,a,qObj.tol))ok=false;});
+    your=`(${vals.map(v=>isNaN(v)?'?':r2(v)).join(', ')})`;
+  } else if(qObj.type==='choice'){
+    const sel=container.dataset.sel===''?-1:parseInt(container.dataset.sel,10);
+    ok=(sel===qObj.answerIndex);your=sel<0?'':qObj.options[sel];
+  }
+  return {ok,your};
+}
+
+function buildAnswer(){ buildAnswerInto(q, ansArea, check); }
 
 function within(v,target,tol){return !isNaN(v)&&Math.abs(v-target)<=tol;}
 
 function check(){
   if(answered)return;
-  let ok=false, your='';
-  if(q.type==='num'||q.type==='expr'){
-    const raw=$('ans').value;your=raw;
-    const v=evalExpr(raw);
-    ok=within(v,q.answer,q.tol);
-  } else if(q.type==='frac'){
-    const n=parseInt($('fnum').value,10),d=parseInt($('fden').value,10);
-    your=`${n}π/${d}`;
-    if(!isNaN(n)&&!isNaN(d)&&d!==0){const[rn,rd]=reduceFrac(n,d);const[an,ad]=reduceFrac(q.num,q.den);ok=(rn===an&&rd===ad);}
-  } else if(q.type==='triple'){
-    ok=true;const vals=[];
-    q.answers.forEach((a,i)=>{const v=evalExpr($('t'+i).value);vals.push(v);if(!within(v,a,q.tol))ok=false;});
-    your=`(${vals.map(v=>isNaN(v)?'?':r2(v)).join(', ')})`;
-  } else if(q.type==='choice'){
-    if(choiceSel<0){flash('Pick an option first.');return;}
-    ok=(choiceSel===q.answerIndex);your=q.options[choiceSel];
-    const ch=ansArea.querySelectorAll('.choice');
-    ch.forEach((c,i)=>{c.classList.remove('sel');if(i===q.answerIndex)c.classList.add('right');else if(i===choiceSel)c.classList.add('wrong');});
+  if(q.type==='choice' && (ansArea.dataset.sel===''||ansArea.dataset.sel==null)){flash('Pick an option first.');return;}
+  const {ok,your}=gradeAnswer(q, ansArea);
+  if(q.type==='choice'){
+    const sel=parseInt(ansArea.dataset.sel,10);
+    ansArea.querySelectorAll('.choice').forEach((c,i)=>{
+      c.classList.remove('sel');
+      if(i===q.answerIndex)c.classList.add('right');else if(i===sel)c.classList.add('wrong');
+    });
   }
+  ansArea.dataset.locked='1';
   answered=true;attempted++;
   if(ok){correct++;streak++;} else streak=0;
   updateStats();
@@ -1831,30 +2007,275 @@ function renderDash(){
 }
 function showPage(which){
   historyShown=(which==='history');
-  $('practicePage').style.display=historyShown?'none':'block';
+  const examP=(which==='exam');
+  $('practicePage').style.display=(which==='practice')?'block':'none';
   $('historyPage').style.display=historyShown?'block':'none';
-  $('navPractice').classList.toggle('on',!historyShown);
+  $('examPage').style.display=examP?'block':'none';
+  $('navPractice').classList.toggle('on',which==='practice');
   $('navHistory').classList.toggle('on',historyShown);
-  if(historyShown){ renderHistory(); updateHistCount(); }
+  $('navExam').classList.toggle('on',examP);
+  if(historyShown){ renderHistory(); updateHistCount(); renderExamHistory(); }
+  if(examP){ showExamStart(); }
   try{window.scrollTo(0,0);}catch(e){}
 }
 function resetHistory(){
-  if(history.length===0 && attempted===0) return;
-  if(!confirm('Clear your entire solved history and stats? This cannot be undone.')) return;
-  history=[]; correct=0; attempted=0; qcount=0; streak=0;
-  saveState(); updateStats(); updateHistCount(); renderHistory();
+  if(history.length===0 && attempted===0 && examHistory.length===0) return;
+  if(!confirm('Clear your entire solved history, prep exams, and stats? This cannot be undone.')) return;
+  history=[]; correct=0; attempted=0; qcount=0; streak=0; examHistory=[];
+  saveState(); updateStats(); updateHistCount(); renderHistory(); renderExamHistory();
+}
+
+/* ============ Exam Prep mode ============ */
+/* Ordered like the teacher's practice sheet; covers every topic once, doubling the
+   heavier sections. ~26 questions — tune the counts freely. */
+const EXAM_BLUEPRINT=[
+  {t:'dist',n:2},{t:'mid',n:2},                          // 4-3
+  {t:'special',n:2},                                     // 4-4
+  {t:'ratio',n:2},{t:'side',n:2},{t:'findang',n:1},      // 4-5
+  {t:'word',n:1},{t:'area',n:2},                         // 4-6
+  {t:'sines',n:1},{t:'sineang',n:1},{t:'amb',n:1},       // 4-7
+  {t:'cosines',n:2},                                     // 4-8
+  {t:'circ',n:1},{t:'rd',n:1},                           // 5-1
+  {t:'arc',n:1},{t:'arcm',n:1},{t:'pie',n:1},{t:'d2r',n:1},{t:'r2d',n:1}, // 5-2
+  {t:'chord',n:1},                                       // 5-3
+];
+let examQs=[], examAns=[], examIdx=0, examStartTs=0, examTimer=null, examRunning=false;
+
+function topicNameById(id){const t=TOPICS.find(x=>x.id===id);return t?t.name:id;}
+function fmtDuration(ms){
+  const s=Math.max(0,Math.round(ms/1000)), m=Math.floor(s/60), ss=s%60;
+  return m+':'+String(ss).padStart(2,'0');
+}
+
+function buildExam(){
+  examQs=[]; examAns=[];
+  EXAM_BLUEPRINT.forEach(({t,n})=>{
+    const topic=TOPICS.find(x=>x.id===t); if(!topic) return;
+    for(let i=0;i<n;i++){ const qq=topic.gen(); qq._topic=t; examQs.push(qq); }
+  });
+  examIdx=0; examStartTs=Date.now();
+}
+
+function startExam(){
+  buildExam();
+  examRunning=true;
+  document.body.classList.add('exam-running');
+  $('examStart').style.display='none';
+  $('examResults').style.display='none';
+  $('examRun').style.display='flex';
+  startExamTimer();
+  renderExamQuestion();
+  try{window.scrollTo(0,0);}catch(e){}
+}
+
+function startExamTimer(){ stopExamTimer(); tickExamTimer(); examTimer=setInterval(tickExamTimer,1000); }
+function stopExamTimer(){ if(examTimer){clearInterval(examTimer);examTimer=null;} }
+function tickExamTimer(){ $('examTimer').textContent=fmtDuration(Date.now()-examStartTs); }
+
+function renderExamQuestion(){
+  const qx=examQs[examIdx], total=examQs.length;
+  const lessonId=tagToLesson(qx.tag);
+  $('examSection').textContent=lessonId?lessonTitleById(lessonId).replace('· ','· '):'';
+  $('examTag').textContent=qx.tag;
+  $('examProgressText').textContent='Question '+(examIdx+1)+' / '+total;
+  $('examProgressFill').style.width=Math.round(examIdx/total*100)+'%';
+  $('examPrompt').innerHTML=qx.prompt; renderFractions($('examPrompt'));
+  $('examDiagram').innerHTML=qx.diagram||''; $('examDiagram').style.display=qx.diagram?'flex':'none';
+  if(qx.given){$('examGiven').style.display='block';$('examGiven').innerHTML=qx.given.replace(/·/g,'<b>·</b>');renderFractions($('examGiven'));}
+  else $('examGiven').style.display='none';
+  buildAnswerInto(qx, $('examAnswerArea'), examNext);
+  $('examNextBtn').textContent=(examIdx===total-1)?'Finish exam':'Next →';
+}
+
+function examNext(){
+  examAns[examIdx]=gradeAnswer(examQs[examIdx], $('examAnswerArea'));
+  if(examIdx<examQs.length-1){ examIdx++; renderExamQuestion(); try{window.scrollTo(0,0);}catch(e){} }
+  else finishExam();
+}
+
+function buildExamRecord(){
+  const results=examQs.map((qx,i)=>({
+    topic:qx._topic||null, tag:qx.tag, prompt:qx.prompt, given:qx.given||'', diagram:qx.diagram||'',
+    solution:qx.solution, exact:qx.exact||'',
+    your:(examAns[i]&&examAns[i].your)||'',
+    result:(examAns[i]&&examAns[i].ok)?'correct':'wrong'
+  }));
+  const correctN=results.filter(r=>r.result==='correct').length;
+  return {id:'ex'+Date.now(), ts:Date.now(), durationMs:Date.now()-examStartTs,
+    total:results.length, correct:correctN, results};
+}
+
+function finishExam(){
+  stopExamTimer();
+  const rec=buildExamRecord();
+  examHistory.push(rec);
+  saveState();
+  examRunning=false;
+  document.body.classList.remove('exam-running');
+  $('examRun').style.display='none';
+  $('examStart').style.display='none';
+  $('examResults').style.display='block';
+  renderExamResults(rec);
+  try{window.scrollTo(0,0);}catch(e){}
+}
+
+function exitExam(){
+  if(examRunning && !confirm('Leave this exam? Your progress will be discarded.')) return;
+  stopExamTimer();
+  examRunning=false;
+  document.body.classList.remove('exam-running');
+  showExamStart();
+}
+
+function showExamStart(){
+  $('examStart').style.display='block';
+  $('examRun').style.display='none';
+  $('examResults').style.display='none';
+  $('examCount').textContent=EXAM_BLUEPRINT.reduce((s,b)=>s+b.n,0);
+  const last=examHistory[examHistory.length-1];
+  $('examLast').innerHTML = last
+    ? `Last exam: <b>${last.correct}/${last.total}</b> (${Math.round(last.correct/last.total*100)}%) · ${fmtDuration(last.durationMs)} · ${new Date(last.ts).toLocaleDateString()}`
+    : 'No exams taken yet — this will be your first.';
+}
+
+/* ---- analysis: score + what to practise next ---- */
+function analyzeExam(results){
+  const byTopic={};
+  results.forEach(r=>{
+    const key=r.topic||r.tag;
+    const o=byTopic[key]||(byTopic[key]={topic:r.topic||null,tag:r.tag,a:0,c:0});
+    o.a++; if(r.result==='correct')o.c++;
+  });
+  const topics=Object.values(byTopic);
+  const weak=topics.filter(o=>o.c<o.a).sort((x,y)=>(x.c/x.a)-(y.c/y.a)||y.a-x.a);
+  const strong=topics.filter(o=>o.c===o.a);
+  const correct=results.filter(r=>r.result==='correct').length;
+  const total=results.length, pct=total?correct/total:0;
+  const byL={};
+  results.forEach(r=>{const L=tagToLesson(r.tag);if(!L)return;(byL[L]=byL[L]||{a:0,c:0});byL[L].a++;if(r.result==='correct')byL[L].c++;});
+  const lessons=Object.keys(byL).map(L=>({L,a:byL[L].a,c:byL[L].c,acc:byL[L].c/byL[L].a}));
+  return {correct,total,pct,weak,strong,lessons};
+}
+
+function renderExamAnalysis(container, results){
+  const A=analyzeExam(results);
+  const pct=Math.round(A.pct*100);
+  const verdict = A.pct>=0.85?{t:'Exam-ready 🎉',c:'good'}
+    : A.pct>=0.6?{t:'Almost there — tighten a few areas',c:'flat'}
+    : {t:'Keep practising — focus on the list below',c:'warn'};
+  const weakHtml = A.weak.length
+    ? A.weak.map(o=>{
+        const name=o.topic?topicNameById(o.topic):o.tag;
+        const jump=o.topic?`<button class="exam-practice" data-topic="${o.topic}">Practice this →</button>`:'';
+        return `<div class="exam-weak-row"><span class="exam-weak-name">${name}</span>
+          <span class="exam-weak-score">${o.c}/${o.a}</span>${jump}</div>`;
+      }).join('')
+    : `<div class="exam-allgood">Nothing missed — every topic correct! 🟢</div>`;
+  const strongHtml = A.strong.length
+    ? A.strong.map(o=>`<span class="exam-strong-chip">${o.topic?topicNameById(o.topic):o.tag}</span>`).join('')
+    : '<span class="exam-muted">— none yet</span>';
+  const bars = A.lessons.slice().sort((x,y)=>x.acc-y.acc||y.a-x.a).map(r=>{
+    const p=Math.round(r.acc*100);
+    return `<div class="dbar-row"><span class="dbar-name" title="${lessonTitleById(r.L)}">${r.L} ${(lessonTitleById(r.L).split('· ')[1]||'')}</span>
+      <div class="dbar-track"><div class="dbar-fill" style="width:${p}%;background:${barColor(r.acc)}"></div></div>
+      <span class="dbar-pct">${p}% (${r.c}/${r.a})</span></div>`;
+  }).join('');
+  container.innerHTML=`
+    <div class="exam-verdict ${verdict.c}">${verdict.t} · ${A.correct}/${A.total} (${pct}%)</div>
+    <div class="exam-analysis-grid">
+      <div class="exam-an-card warn"><div class="exam-an-k">🔴 Needs more practice</div>${weakHtml}</div>
+      <div class="exam-an-card good"><div class="exam-an-k">💪 Strong</div><div class="exam-strong-wrap">${strongHtml}</div></div>
+    </div>
+    <div class="dash-title" style="margin-top:12px;font-family:'Fraunces',sans-serif;font-weight:700">Progress by lesson</div>${bars}`;
+  container.querySelectorAll('.exam-practice').forEach(b=>{ b.onclick=()=>practiceTopic(b.dataset.topic); });
+}
+
+function practiceTopic(id){
+  selectLesson('all');
+  active.clear(); active.add(id);
+  renderChips(); syncToggleLabel();
+  showPage('practice');
+  newQuestion();
+}
+
+function renderReviewList(container, results){
+  container.innerHTML='';
+  results.forEach((h,i)=>{
+    const badge=h.result==='correct'?'<span class="hbadge ok">✓ Correct</span>':'<span class="hbadge bad">✗ Incorrect</span>';
+    const el=document.createElement('div'); el.className='hentry';
+    el.innerHTML=`<div class="hhead"><span class="htag">${h.tag} · #${i+1}</span>${badge}</div>
+      <div class="hprompt">${h.prompt}</div>
+      ${h.diagram?`<div class="diagram hdiagram">${h.diagram}</div>`:''}
+      ${h.given?`<div class="given">${h.given.replace(/·/g,'<b>·</b>')}</div>`:''}
+      <div class="hyour">Your answer: <b>${h.your?escapeHtml(h.your):'(blank)'}</b></div>
+      <button class="hsol-btn">Show solution</button>
+      <div class="hsol" style="display:none"><div class="sol">${h.solution}${h.exact?` &nbsp;<span style="color:var(--muted)">(exact: ${h.exact})</span>`:''}</div></div>`;
+    const btn=el.querySelector('.hsol-btn'), sol=el.querySelector('.hsol');
+    btn.onclick=()=>{const sh=sol.style.display==='none';sol.style.display=sh?'block':'none';btn.textContent=sh?'Hide solution':'Show solution';};
+    container.appendChild(el);
+    renderFractions(el);
+  });
+}
+
+function renderExamResults(rec){
+  $('examScore').innerHTML=`${rec.correct}<small> / ${rec.total}</small>`;
+  $('examScorePct').textContent=Math.round(rec.correct/rec.total*100)+'%';
+  $('examScoreTime').textContent=fmtDuration(rec.durationMs);
+  renderExamAnalysis($('examAnalysis'), rec.results);
+  renderReviewList($('examReview'), rec.results);
+}
+
+function renderExamHistory(){
+  const wrap=$('examHistoryList'); if(!wrap) return;
+  wrap.innerHTML='';
+  $('examHistEmpty').style.display=examHistory.length?'none':'block';
+  for(let i=examHistory.length-1;i>=0;i--){
+    const e=examHistory[i];
+    const pct=Math.round(e.correct/e.total*100);
+    const d=new Date(e.ts);
+    const card=document.createElement('div'); card.className='exam-card';
+    card.innerHTML=`<div class="exam-card-head">
+        <div><div class="exam-card-score">${e.correct} / ${e.total}<span class="exam-card-pct" style="color:${barColor(e.correct/e.total)}">${pct}%</span></div>
+        <div class="exam-card-meta">${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} · ${fmtDuration(e.durationMs)}</div></div>
+        <button class="exam-card-toggle">Review ▾</button></div>
+      <div class="exam-card-body" style="display:none"></div>`;
+    const toggle=card.querySelector('.exam-card-toggle'), body=card.querySelector('.exam-card-body');
+    let built=false;
+    toggle.onclick=()=>{
+      const sh=body.style.display==='none';
+      body.style.display=sh?'block':'none';
+      toggle.textContent=sh?'Hide ▴':'Review ▾';
+      if(sh && !built){
+        const an=document.createElement('div'); an.className='dash'; body.appendChild(an);
+        renderExamAnalysis(an, e.results);
+        const rev=document.createElement('div'); body.appendChild(rev);
+        renderReviewList(rev, e.results);
+        built=true;
+      }
+    };
+    wrap.appendChild(card);
+  }
 }
 
 $('checkBtn').onclick=check;
 $('solBtn').onclick=showSolution;
 $('nextBtn').onclick=newQuestion;
 $('navPractice').onclick=()=>showPage('practice');
+$('navExam').onclick=()=>showPage('exam');
 $('navHistory').onclick=()=>showPage('history');
 $('resetBtn').onclick=resetHistory;
+$('examStartBtn').onclick=startExam;
+$('examNextBtn').onclick=examNext;
+$('examExitBtn').onclick=exitExam;
+$('examRetakeBtn').onclick=startExam;
+$('examBackBtn').onclick=()=>showPage('practice');
 $('navRules').onclick=()=>$('rulesModal').style.display='flex';
 $('rulesClose').onclick=()=>$('rulesModal').style.display='none';
 $('rulesModal').onclick=e=>{ if(e.target===$('rulesModal')) $('rulesModal').style.display='none'; };
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'){$('rulesModal').style.display='none';$('ssaModal').style.display='none';} });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){
+  if(examRunning){exitExam();return;}
+  $('rulesModal').style.display='none';$('ssaModal').style.display='none';
+} });
 renderFractions($('rulesBody'));
 
 /* ---- SSA explorer modal ---- */
