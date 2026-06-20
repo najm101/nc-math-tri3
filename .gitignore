@@ -3,3 +3,6 @@
 
 # Claude Code local preview/server config
 .claude/
+
+# backup of the original single-file app
+*.bak
