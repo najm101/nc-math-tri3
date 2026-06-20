@@ -66,9 +66,9 @@ function svgWordTri(cfg){
 
 function gWord(kind){
   // grouped by what the problem asks for: a side via elevation, a side via depression, or an angle
-  const byKind={elev:['ramp','ladder','shadow'],depr:['plane'],angle:['treeAngle','rampAngle']};
+  const byKind={elev:['ramp','ladder','shadow','boatHotel'],depr:['plane','escarpment'],angle:['treeAngle','rampAngle']};
   const t = kind ? pick(byKind[kind])
-    : pick(['plane','ramp','ladder','shadow','treeAngle','rampAngle']);
+    : pick(['plane','ramp','ladder','shadow','treeAngle','rampAngle','escarpment','boatHotel']);
   if(t==='treeAngle'){
     const h=ri(6,30), sh=ri(6,30);
     const ans=Math.atan(h/sh)/DEG;
@@ -95,6 +95,24 @@ function gWord(kind){
       diagram:svgWordTri({a:a,mode:'R',vert:`${h} m`,horiz:'x',hyp:'',depression:true}),
       type:'num',answer:ans,tol:Math.max(2,ans*0.002),unit:'m',
       solution:`The angle of depression at the plane equals the angle of elevation at the tower. <code>tan(${a}°) = ${h}/x → x = ${h}/tan(${a}°) = ${r1(ans)} m</code>`};
+  }
+  if(t==='escarpment'){
+    const h=pick([80,100,120,150]);const a=ri(35,55);
+    const ans=h/Math.tan(a*DEG);
+    return {tag:'Word problem · depression',
+      prompt:`From the top of an escarpment, an observer sees a car below at an angle of depression of <b>${a}°</b>. The observer is about <b>${h} m</b> above the car. How far is the car from the base of the escarpment? Round to the nearest metre.`,
+      diagram:svgWordTri({a:a,mode:'R',vert:`${h} m`,horiz:'x',hyp:'',depression:true}),
+      type:'num',answer:ans,tol:Math.max(2,ans*0.002),unit:'m',
+      solution:`The angle of depression equals the angle of elevation at the base. <code>tan(${a}°) = ${h}/x → x = ${h}/tan(${a}°) = ${r1(ans)} m</code>`};
+  }
+  if(t==='boatHotel'){
+    const h=pick([60,90,120]);const a=ri(8,20);
+    const ans=h/Math.tan(a*DEG);
+    return {tag:'Word problem · elevation',
+      prompt:`The angle of elevation from a boat to the top of a <b>${h} m</b> building is <b>${a}°</b>. How far is the boat from the base of the building? Round to the nearest metre.`,
+      diagram:svgWordTri({a:a,mode:'L',vert:`${h} m`,horiz:'x',hyp:''}),
+      type:'num',answer:ans,tol:Math.max(2,ans*0.002),unit:'m',
+      solution:`The height is opposite the angle and the base is adjacent. <code>tan(${a}°) = ${h}/base → base = ${h}/tan(${a}°) = ${r1(ans)} m</code>`};
   }
   if(t==='ramp'){
     const a=ri(2,12);

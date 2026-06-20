@@ -1,29 +1,27 @@
 import { $, escapeHtml } from '../core/helpers.js';
 import { state, saveState } from '../core/state.js';
 import { renderFractions } from '../core/fractions.js';
-import { SUBTOPICS, parentTopicOf, leafName } from '../registry.js';
+import { TOPICS, SUBTOPICS, parentTopicOf, leafName, topicGen } from '../registry.js';
 import { buildAnswerInto, gradeAnswer } from './answer.js';
 import { tagToLesson, lessonTitleById, barColor, showPage } from './history.js';
 import { selectLesson, renderChips, syncToggleLabel, newQuestion } from './practice.js';
 
 /* ============ Exam Prep mode ============ */
-/* Ordered like the teacher's practice sheet. Entries are SUBTOPIC (leaf) ids, so the
-   exam is guaranteed to touch every variant of every topic at least once — e.g. both
-   2-D and 3-D distance, both special triangles, both ambiguous-case outcomes. ~35
-   questions; bump any `n` to weight a section more heavily. */
+/* Ordered like the teacher's practice sheet. Entries may be SUBTOPIC leaf ids or parent
+   topic ids. Leaf ids guarantee a specific variant; parent ids use that topic's normal
+   random generator, matching the 32-question weighting from the original single-file app. */
 const EXAM_BLUEPRINT=[
   {t:'dist-2d',n:1},{t:'dist-3d',n:1},{t:'mid-2d',n:1},{t:'mid-3d',n:1},          // 4-3
   {t:'special-4545',n:1},{t:'special-3060',n:1},                                  // 4-4
   {t:'ratio-all',n:1},{t:'ratio-one',n:1},
-  {t:'side-sin',n:1},{t:'side-cos',n:1},{t:'side-tan',n:1},
-  {t:'findang-sin',n:1},{t:'findang-cos',n:1},{t:'findang-tan',n:1},              // 4-5
-  {t:'word-elev',n:1},{t:'word-depr',n:1},{t:'word-angle',n:1},{t:'area',n:1},    // 4-6
-  {t:'sines',n:1},{t:'sineang',n:1},{t:'amb-0',n:1},{t:'amb-1',n:1},              // 4-7
-  {t:'cosines',n:1},                                                              // 4-8
-  {t:'circ-r',n:1},{t:'circ-d',n:1},{t:'rd-r2d',n:1},{t:'rd-d2r',n:1},            // 5-1
-  {t:'arc',n:1},{t:'arcm-minor',n:1},{t:'arcm-major',n:1},{t:'arcm-diam',n:1},
+  {t:'side',n:2},{t:'findang',n:2},                                                // 4-5
+  {t:'word-elev',n:1},{t:'word-depr',n:1},{t:'word-angle',n:1},{t:'area',n:3},     // 4-6
+  {t:'sines',n:1},{t:'sineang',n:1},{t:'amb',n:2},                                 // 4-7
+  {t:'cosines',n:2},                                                               // 4-8
+  {t:'circ',n:1},{t:'rd',n:1},                                                     // 5-1
+  {t:'arc',n:1},{t:'arcm',n:1},
   {t:'pie',n:1},{t:'d2r',n:1},{t:'r2d',n:1},                                      // 5-2
-  {t:'chord-equi',n:1},{t:'chord-cong',n:1},                                      // 5-3
+  {t:'chord',n:1},                                                                 // 5-3
 ];
 let examQs=[], examAns=[], examIdx=0, examStartTs=0, examTimer=null, examRunning=false;
 
@@ -36,8 +34,11 @@ function fmtDuration(ms){
 function buildExam(){
   examQs=[]; examAns=[];
   EXAM_BLUEPRINT.forEach(({t,n})=>{
-    const sub=SUBTOPICS[t]; if(!sub) return;
-    for(let i=0;i<n;i++){ const qq=sub.gen(); qq._topic=t; examQs.push(qq); }
+    const sub=SUBTOPICS[t];
+    const topic=TOPICS.find(x=>x.id===t);
+    const gen=sub ? sub.gen : topic ? topicGen(topic) : null;
+    if(!gen) return;
+    for(let i=0;i<n;i++){ const qq=gen(); qq._topic=t; examQs.push(qq); }
   });
   examIdx=0; examStartTs=Date.now();
 }

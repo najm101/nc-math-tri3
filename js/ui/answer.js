@@ -55,7 +55,7 @@ function gradeAnswer(qObj, container){
     if(!isNaN(n)&&!isNaN(d)&&d!==0){const[rn,rd]=reduceFrac(n,d);const[an,ad]=reduceFrac(qObj.num,qObj.den);ok=(rn===an&&rd===ad);}
   } else if(qObj.type==='triple'){
     ok=true;const vals=[];
-    qObj.answers.forEach((a,i)=>{const v=evalExpr(container.querySelector('.triple-input[data-i="'+i+'"]').value);vals.push(v);if(!within(v,a,qObj.tol))ok=false;});
+    qObj.answers.forEach((a,i)=>{const t=(qObj.tols&&qObj.tols[i]!=null)?qObj.tols[i]:qObj.tol;const v=evalExpr(container.querySelector('.triple-input[data-i="'+i+'"]').value);vals.push(v);if(!within(v,a,t))ok=false;});
     your=`(${vals.map(v=>isNaN(v)?'?':r2(v)).join(', ')})`;
   } else if(qObj.type==='choice'){
     const sel=container.dataset.sel===''?-1:parseInt(container.dataset.sel,10);

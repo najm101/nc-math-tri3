@@ -15,7 +15,7 @@ import { gLawCosines } from './generators/law-cosines.js';
 import { gArea } from './generators/area.js';
 import { gDistance, gDistance2D, gDistance3D } from './generators/distance.js';
 import { gMidpoint, gMidpoint2D, gMidpoint3D } from './generators/midpoint.js';
-import { gAmbiguous, gAmb0, gAmb1 } from './generators/ambiguous.js';
+import { gAmbiguous } from './generators/ambiguous.js';
 import { gChords, gChordEqui, gChordCong } from './generators/chords.js';
 
 /* ---------- registry ----------
@@ -56,9 +56,7 @@ const TOPICS=[
     {id:'word-angle',name:'Word problem · find angle',gen:gWordAngle}]},
   {id:'d2r',name:'Deg → rad',gen:gDegToRad},
   {id:'r2d',name:'Rad → deg',gen:gRadToDeg},
-  {id:'amb',name:'Ambiguous case',subs:[
-    {id:'amb-0',name:'Ambiguous case · no triangle',gen:gAmb0},
-    {id:'amb-1',name:'Ambiguous case · one triangle',gen:gAmb1}]},
+  {id:'amb',name:'Ambiguous case',gen:gAmbiguous},
   {id:'sines',name:'Law of Sines',gen:gLawSines},
   {id:'sineang',name:'Law of Sines (∠)',gen:gLawSinesAngle},
   {id:'cosines',name:'Law of Cosines',gen:gLawCosines},
