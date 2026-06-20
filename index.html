@@ -1327,7 +1327,7 @@ function svgWordTri(cfg){
 }
 
 function gWord(){
-  const t=pick(['plane','ramp','ladder','shadow','treeAngle','rampAngle']);
+  const t=pick(['plane','ramp','ladder','shadow','treeAngle','rampAngle','escarpment','boatHotel']);
   if(t==='treeAngle'){
     const h=ri(6,30), sh=ri(6,30);
     const ans=Math.atan(h/sh)/DEG;
@@ -1354,6 +1354,24 @@ function gWord(){
       diagram:svgWordTri({a:a,mode:'R',vert:`${h} m`,horiz:'x',hyp:'',depression:true}),
       type:'num',answer:ans,tol:Math.max(2,ans*0.002),unit:'m',
       solution:`The angle of depression at the plane equals the angle of elevation at the tower. <code>tan(${a}°) = ${h}/x → x = ${h}/tan(${a}°) = ${r1(ans)} m</code>`};
+  }
+  if(t==='escarpment'){
+    const h=pick([80,100,120,150]);const a=ri(35,55);
+    const ans=h/Math.tan(a*DEG);
+    return {tag:'Word problem · depression',
+      prompt:`From the top of an escarpment, an observer sees a car below at an angle of depression of <b>${a}°</b>. The observer is about <b>${h} m</b> above the car. How far is the car from the base of the escarpment? Round to the nearest metre.`,
+      diagram:svgWordTri({a:a,mode:'R',vert:`${h} m`,horiz:'x',hyp:'',depression:true}),
+      type:'num',answer:ans,tol:Math.max(2,ans*0.002),unit:'m',
+      solution:`The angle of depression equals the angle of elevation at the base. <code>tan(${a}°) = ${h}/x → x = ${h}/tan(${a}°) = ${r1(ans)} m</code>`};
+  }
+  if(t==='boatHotel'){
+    const h=pick([60,90,120]);const a=ri(8,20);
+    const ans=h/Math.tan(a*DEG);
+    return {tag:'Word problem · elevation',
+      prompt:`The angle of elevation from a boat to the top of a <b>${h} m</b> building is <b>${a}°</b>. How far is the boat from the base of the building? Round to the nearest metre.`,
+      diagram:svgWordTri({a:a,mode:'L',vert:`${h} m`,horiz:'x',hyp:''}),
+      type:'num',answer:ans,tol:Math.max(2,ans*0.002),unit:'m',
+      solution:`The height is opposite the angle and the base is adjacent. <code>tan(${a}°) = ${h}/base → base = ${h}/tan(${a}°) = ${r1(ans)} m</code>`};
   }
   if(t==='ramp'){
     const a=ri(2,12);
@@ -1486,15 +1504,18 @@ function gLawCosines(){
 function gArea(){
   const p=ri(5,18),q=ri(5,18);const ang=ri(25,140);
   const area=0.5*p*q*Math.sin(ang*DEG);
+  // third side (opposite the included angle C) via the Law of Cosines, so the
+  // figure shows all three sides; the student still uses ½·a·b·sin C.
+  const third=Math.sqrt(p*p+q*q-2*p*q*Math.cos(ang*DEG));
   const P={C:[0,0],A:[q,0],B:[p*Math.cos(ang*DEG),p*Math.sin(ang*DEG)]};
   const dia=svgTri(P,{verts:[{at:'A',text:'A'},{at:'B',text:'B'},{at:'C',text:'C'}],
     angles:[{at:'C',text:ang+'°'}],
-    sides:[{a:'C',b:'A',text:String(q)},{a:'C',b:'B',text:String(p)}]});
+    sides:[{a:'C',b:'A',text:String(q)},{a:'C',b:'B',text:String(p)},{a:'A',b:'B',text:r1(third)}]});
   return {tag:'Area of a triangle',
     prompt:`Find the <b>area</b> of the triangle to the nearest tenth.`,
     diagram:dia,type:'num',answer:area,tol:0.2,unit:'units²',
-    given:`Two sides = ${p} and ${q} · included angle = ${ang}°`,
-    solution:`Area = ½·a·b·sin C = <code>½(${p})(${q})sin(${ang}°) = <span class="ans">${r1(area)}</span></code>`};
+    given:`Sides = ${p}, ${q}, ${r1(third)} · included angle = ${ang}° (between the ${p} and ${q} sides)`,
+    solution:`Use the two sides adjacent to the given angle. Area = ½·a·b·sin C = <code>½(${p})(${q})sin(${ang}°) = <span class="ans">${r1(area)}</span></code>`};
 }
 
 function pt(n){n=n||3;const a=[];for(let i=0;i<n;i++)a.push(ri(-8,8));return a;}
@@ -1526,34 +1547,29 @@ function gMidpoint(){
 
 function gAmbiguous(){
   // angle A (acute or obtuse), side a opposite A, side c the other given side.
-  // Only 0- or 1-solution cases are generated (matches the quizzes).
-  const kind=pick(['obtuse1','obtuse0','acute0','acute1']);
-  let A,a,c,count,why;
-  if(kind==='obtuse1'){
-    A=ri(95,140); a=ri(20,34); c=ri(6,a-4); count=1;
-    why=`A is obtuse and a (${a}) > c (${c}), so exactly one triangle exists.`;
-  } else if(kind==='obtuse0'){
-    A=ri(95,140); a=ri(8,16); c=ri(a+3,28); count=0;
-    why=`A is obtuse but a (${a}) ≤ c (${c}); the side opposite the obtuse angle is not the longest, so no triangle exists.`;
-  } else if(kind==='acute0'){
-    A=ri(30,75); c=ri(14,30); const h=c*Math.sin(A*DEG);
-    a=Math.max(3,Math.round(h*0.6)); count=0;
-    why=`h = c·sin A = ${r1(h)}. Since a (${a}) &lt; h, the side is too short to reach the base — no triangle.`;
-  } else { // acute1
-    A=ri(30,75); c=ri(14,30); a=ri(c+1,c+12); count=1;
-    why=`h = c·sin A = ${r1(c*Math.sin(A*DEG))}. Since a (${a}) ≥ c (${c}), exactly one triangle exists.`;
+  // Only 1-solution cases are generated so the triangle is always solvable:
+  // the student states the number of solutions AND solves it (m∠C, m∠B, b).
+  const kind=pick(['obtuse','acute']);
+  let A,a,c,why;
+  if(kind==='obtuse'){
+    A=ri(95,140); a=ri(20,34); c=ri(6,a-4);
+    why=`A is obtuse and a (${a}) &gt; c (${c}), so exactly <b>1</b> triangle exists.`;
+  } else { // acute, a >= c  ->  exactly one triangle
+    A=ri(30,75); c=ri(14,30); a=ri(c+1,c+12);
+    why=`h = c·sin A = ${r1(c*Math.sin(A*DEG))}. Since a (${a}) ≥ c (${c}), exactly <b>1</b> triangle exists.`;
   }
-  // for the single-triangle cases, solve the triangle in the worked solution
-  let solve='';
-  if(count===1){
-    const sinC=Math.min(1,c*Math.sin(A*DEG)/a);
-    const C=Math.asin(sinC)/DEG, B=180-A-C, b=a*Math.sin(B*DEG)/Math.sin(A*DEG);
-    solve=`<div class="step">Solve it with the Law of Sines: <code>sin C = c·sin A / a = ${r2(sinC)}</code> → m∠C ≈ ${r1(C)}°, m∠B ≈ ${r1(B)}°, b ≈ ${r1(b)}.</div>`;
-  }
+  // solve the triangle with the Law of Sines
+  const sinC=Math.min(1,c*Math.sin(A*DEG)/a);
+  const C=Math.asin(sinC)/DEG, B=180-A-C, b=a*Math.sin(B*DEG)/Math.sin(A*DEG);
+  const solve=`<div class="step">Solve with the Law of Sines:</div>`
+    +`<div class="step"><code>sin C = c·sin A / a = ${c}·sin(${A}°)/${a} = ${r2(sinC)}</code> → <code>m∠C ≈ ${r1(C)}°</code></div>`
+    +`<div class="step"><code>m∠B = 180° − ${A}° − ${r1(C)}° ≈ ${r1(B)}°</code></div>`
+    +`<div class="step"><code>b = a·sin B / sin A = ${a}·sin(${r1(B)}°)/sin(${A}°) ≈ ${r1(b)}</code></div>`;
   return {tag:'Ambiguous case (SSA)',
-    prompt:`How many triangles can be formed? (The solution then solves it.)`,
-    given:`m∠A = ${A}° · a = ${a} · c = ${c}`,
-    type:'choice',options:['0','1'],answerIndex:count,
+    prompt:`State the number of solutions, then solve the triangle.`,
+    given:`m∠A = ${A}° · a = ${a} cm · c = ${c} cm`,
+    type:'triple',labels:['# solutions','m∠C (°)','m∠B (°)','b'],
+    answers:[1,C,B,b],tols:[0.5,2,2,2],
     solution:why+solve+`<div class="soldiag">${svgSSA(A,c,a).svg}</div>`
       +`<div class="step" style="color:var(--muted)">Blue = fixed side c · gray dashed = altitude h · purple dashed = the swing of side a · green = the side that lands on the base. Open <b>SSA explorer</b> in the nav to drag the values.</div>`};
 }
@@ -1850,7 +1866,7 @@ function gradeAnswer(qObj, container){
     if(!isNaN(n)&&!isNaN(d)&&d!==0){const[rn,rd]=reduceFrac(n,d);const[an,ad]=reduceFrac(qObj.num,qObj.den);ok=(rn===an&&rd===ad);}
   } else if(qObj.type==='triple'){
     ok=true;const vals=[];
-    qObj.answers.forEach((a,i)=>{const v=evalExpr(container.querySelector('.triple-input[data-i="'+i+'"]').value);vals.push(v);if(!within(v,a,qObj.tol))ok=false;});
+    qObj.answers.forEach((a,i)=>{const t=(qObj.tols&&qObj.tols[i]!=null)?qObj.tols[i]:qObj.tol;const v=evalExpr(container.querySelector('.triple-input[data-i="'+i+'"]').value);vals.push(v);if(!within(v,a,t))ok=false;});
     your=`(${vals.map(v=>isNaN(v)?'?':r2(v)).join(', ')})`;
   } else if(qObj.type==='choice'){
     const sel=container.dataset.sel===''?-1:parseInt(container.dataset.sel,10);
@@ -2031,9 +2047,9 @@ function resetHistory(){
 const EXAM_BLUEPRINT=[
   {t:'dist',n:2},{t:'mid',n:2},                          // 4-3
   {t:'special',n:2},                                     // 4-4
-  {t:'ratio',n:2},{t:'side',n:2},{t:'findang',n:1},      // 4-5
-  {t:'word',n:1},{t:'area',n:2},                         // 4-6
-  {t:'sines',n:1},{t:'sineang',n:1},{t:'amb',n:1},       // 4-7
+  {t:'ratio',n:2},{t:'side',n:2},{t:'findang',n:2},      // 4-5
+  {t:'word',n:3},{t:'area',n:3},                         // 4-6
+  {t:'sines',n:1},{t:'sineang',n:1},{t:'amb',n:2},       // 4-7
   {t:'cosines',n:2},                                     // 4-8
   {t:'circ',n:1},{t:'rd',n:1},                           // 5-1
   {t:'arc',n:1},{t:'arcm',n:1},{t:'pie',n:1},{t:'d2r',n:1},{t:'r2d',n:1}, // 5-2
