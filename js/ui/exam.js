@@ -31,9 +31,9 @@ function fmtDuration(ms){
   return m+':'+String(ss).padStart(2,'0');
 }
 
-function buildExam(){
+function buildExam(blueprint){
   examQs=[]; examAns=[];
-  EXAM_BLUEPRINT.forEach(({t,n})=>{
+  blueprint.forEach(({t,n})=>{
     const sub=SUBTOPICS[t];
     const topic=TOPICS.find(x=>x.id===t);
     const gen=sub ? sub.gen : topic ? topicGen(topic) : null;
@@ -43,8 +43,8 @@ function buildExam(){
   examIdx=0; examStartTs=Date.now();
 }
 
-function startExam(){
-  buildExam();
+function launchExam(blueprint){
+  buildExam(blueprint);
   examRunning=true;
   document.body.classList.add('exam-running');
   $('examStart').style.display='none';
@@ -53,6 +53,15 @@ function startExam(){
   startExamTimer();
   renderExamQuestion();
   try{window.scrollTo(0,0);}catch(e){}
+}
+
+// Param-free so it stays safe as a direct click handler (examStartBtn/examRetakeBtn).
+function startExam(){ launchExam(EXAM_BLUEPRINT); }
+
+// Focused exam over only the leaf ids the student was weak on, 2 questions each.
+function startMiniExam(ids){
+  if(!ids || !ids.length) return;
+  launchExam(ids.map(id=>({t:id,n:2})));
 }
 
 function startExamTimer(){ stopExamTimer(); tickExamTimer(); examTimer=setInterval(tickExamTimer,1000); }
@@ -150,6 +159,7 @@ function renderExamAnalysis(container, results){
   const verdict = A.pct>=0.85?{t:'Exam-ready 🎉',c:'good'}
     : A.pct>=0.6?{t:'Almost there — tighten a few areas',c:'flat'}
     : {t:'Keep practising — focus on the list below',c:'warn'};
+  const weakIds = A.weak.filter(o=>o.topic).map(o=>o.topic);
   const weakHtml = A.weak.length
     ? A.weak.map(o=>{
         const name=o.topic?topicNameById(o.topic):o.tag;
@@ -158,6 +168,9 @@ function renderExamAnalysis(container, results){
           <span class="exam-weak-score">${o.c}/${o.a}</span>${jump}</div>`;
       }).join('')
     : `<div class="exam-allgood">Nothing missed — every topic correct! 🟢</div>`;
+  const miniBtn = weakIds.length
+    ? `<button class="exam-minibtn" type="button">Start mini-exam on these (${weakIds.length} topics · ${weakIds.length*2} Qs) →</button>`
+    : '';
   const strongHtml = A.strong.length
     ? A.strong.map(o=>`<span class="exam-strong-chip">${o.topic?topicNameById(o.topic):o.tag}</span>`).join('')
     : '<span class="exam-muted">— none yet</span>';
@@ -170,11 +183,12 @@ function renderExamAnalysis(container, results){
   container.innerHTML=`
     <div class="exam-verdict ${verdict.c}">${verdict.t} · ${A.correct}/${A.total} (${pct}%)</div>
     <div class="exam-analysis-grid">
-      <div class="exam-an-card warn"><div class="exam-an-k">🔴 Needs more practice</div>${weakHtml}</div>
+      <div class="exam-an-card warn"><div class="exam-an-k">🔴 Needs more practice</div>${weakHtml}${miniBtn}</div>
       <div class="exam-an-card good"><div class="exam-an-k">💪 Strong</div><div class="exam-strong-wrap">${strongHtml}</div></div>
     </div>
     <div class="dash-title" style="margin-top:12px;font-family:'Fraunces',sans-serif;font-weight:700">Progress by lesson</div>${bars}`;
   container.querySelectorAll('.exam-practice').forEach(b=>{ b.onclick=()=>practiceTopic(b.dataset.topic); });
+  const mb=container.querySelector('.exam-minibtn'); if(mb) mb.onclick=()=>startMiniExam(weakIds);
 }
 
 function practiceTopic(id){
