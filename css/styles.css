@@ -354,6 +354,21 @@
   .exam-last{font-family:'Space Mono',monospace;font-size:12.5px;color:var(--ink-soft);
     background:var(--paper);border:1px solid var(--grid);border-radius:10px;padding:9px 12px;margin-bottom:14px}
   #examStartBtn{min-width:180px}
+  #examStartBtn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+  /* topic/subtopic selector (reuses .chip / .chip.on) */
+  .exam-selnote{font-size:13px;font-weight:600;color:var(--blue);
+    background:var(--paper);border:1px solid var(--blue);border-radius:10px;padding:8px 12px;margin-bottom:12px}
+  .exam-selhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .exam-sellabel{font-family:'Fraunces',sans-serif;font-weight:700;font-size:14px;color:var(--ink)}
+  .exam-seltoggle{background:var(--card);border:1px solid var(--grid);color:var(--ink-soft);
+    font-family:'Space Mono',monospace;font-size:11px;border-radius:999px;padding:4px 10px;cursor:pointer}
+  .exam-seltoggle:hover{border-color:var(--blue)}
+  .exam-topicsel{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+  .exam-topicgroup{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .exam-topicgroup .chip[data-topic]{font-weight:600}
+  .exam-topicgroup .chip.part{background:var(--paper);border-color:var(--blue);color:var(--ink)}
+  .exam-subchips{display:flex;flex-wrap:wrap;gap:6px;padding-left:10px;border-left:2px solid var(--grid);margin-left:4px}
+  .exam-subchips .chip.sub{font-size:11.5px;padding:5px 10px}
 
   /* immersive running view */
   body.exam-running header,body.exam-running .nav,

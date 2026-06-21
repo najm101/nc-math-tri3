@@ -106,4 +106,4 @@ function leafName(leafId){
   return (SUBTOPICS[leafId]||{}).name || (TOPICS.find(t=>t.id===leafId)||{}).name || leafId;
 }
 
-export { TOPICS, LESSONS, SUBTOPICS, lessonTopics, topicGen, parentTopicOf, leafName };
+export { TOPICS, LESSONS, SUBTOPICS, lessonTopics, leavesOf, topicGen, parentTopicOf, leafName };

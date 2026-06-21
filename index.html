@@ -86,10 +86,16 @@
       <div class="card">
         <div class="qbody">
           <h2 class="exam-h">Exam Prep</h2>
-          <p class="exam-p">A full, exam-style run that covers <b>every topic</b> from the Tri.3 practice
-            sheet — about <b><span id="examCount">26</span> questions</b> in practice-sheet order, roughly
-            25&nbsp;minutes. There are <b>no hints while you work</b>; you get your score, a per-lesson
-            breakdown, and a “what to practise next” analysis at the end.</p>
+          <p class="exam-p">An exam-style run with <b>no hints while you work</b> — about
+            <b><span id="examCount">26</span> questions</b> in practice-sheet order; you get your score, a
+            per-lesson breakdown, and a “what to practise next” analysis at the end. Pick which topics and
+            subtopics to include below (everything is selected by default).</p>
+          <div class="exam-selnote" id="examSelNote" style="display:none"></div>
+          <div class="exam-selhead">
+            <span class="exam-sellabel">Topics &amp; subtopics</span>
+            <button class="exam-seltoggle" id="examSelToggle" type="button">Clear all</button>
+          </div>
+          <div id="examTopicSel" class="exam-topicsel"></div>
           <div class="exam-last" id="examLast"></div>
           <button class="btn btn-primary" id="examStartBtn">Start exam →</button>
         </div>

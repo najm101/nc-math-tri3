@@ -1,7 +1,7 @@
 import { $, escapeHtml } from '../core/helpers.js';
 import { state, saveState } from '../core/state.js';
 import { renderFractions } from '../core/fractions.js';
-import { TOPICS, SUBTOPICS, parentTopicOf, leafName, topicGen } from '../registry.js';
+import { TOPICS, SUBTOPICS, parentTopicOf, leafName, leavesOf, topicGen } from '../registry.js';
 import { buildAnswerInto, gradeAnswer } from './answer.js';
 import { tagToLesson, lessonTitleById, barColor, showPage } from './history.js';
 import { selectLesson, renderChips, syncToggleLabel, newQuestion } from './practice.js';
@@ -23,6 +23,22 @@ const EXAM_BLUEPRINT=[
   {t:'pie',n:1},{t:'d2r',n:1},{t:'r2d',n:1},                                      // 5-2
   {t:'chord',n:1},                                                                 // 5-3
 ];
+/* Expand the curated blueprint into an ordered per-leaf list so the start-screen selector
+   can offer subtopic granularity while keeping practice-sheet order. Already-leaf entries
+   keep their curated count; parent-topic entries fan out to every variant (n:1 each) so
+   selecting a whole topic still guarantees coverage of each subtopic. */
+const EXAM_LEAVES=[];
+EXAM_BLUEPRINT.forEach(({t,n})=>{
+  if(SUBTOPICS[t]){ EXAM_LEAVES.push({id:t,n,topicId:SUBTOPICS[t].topicId}); return; }
+  const topic=TOPICS.find(x=>x.id===t);
+  if(!topic){ EXAM_LEAVES.push({id:t,n,topicId:t}); return; }
+  const leaves=leavesOf(topic);
+  leaves.forEach(s=>EXAM_LEAVES.push({id:s.id,n:leaves.length>1?1:n,topicId:topic.id}));
+});
+// in-memory selection of leaf ids that the next exam will cover (default: everything)
+let examSel=new Set(EXAM_LEAVES.map(l=>l.id));
+let miniExamNote='';
+
 let examQs=[], examAns=[], examIdx=0, examStartTs=0, examTimer=null, examRunning=false;
 
 function topicNameById(id){ return leafName(id); }
@@ -31,9 +47,14 @@ function fmtDuration(ms){
   return m+':'+String(ss).padStart(2,'0');
 }
 
-function buildExam(blueprint){
+// blueprint = the selected leaves, in canonical practice-sheet order
+function selectedBlueprint(){
+  return EXAM_LEAVES.filter(l=>examSel.has(l.id)).map(l=>({t:l.id,n:l.n}));
+}
+
+function buildExam(){
   examQs=[]; examAns=[];
-  blueprint.forEach(({t,n})=>{
+  selectedBlueprint().forEach(({t,n})=>{
     const sub=SUBTOPICS[t];
     const topic=TOPICS.find(x=>x.id===t);
     const gen=sub ? sub.gen : topic ? topicGen(topic) : null;
@@ -43,8 +64,10 @@ function buildExam(blueprint){
   examIdx=0; examStartTs=Date.now();
 }
 
-function launchExam(blueprint){
-  buildExam(blueprint);
+// Param-free so it stays safe as a direct click handler (examStartBtn/examRetakeBtn).
+function startExam(){
+  buildExam();
+  if(!examQs.length) return;       // nothing selected — Start is disabled, but guard anyway
   examRunning=true;
   document.body.classList.add('exam-running');
   $('examStart').style.display='none';
@@ -55,13 +78,21 @@ function launchExam(blueprint){
   try{window.scrollTo(0,0);}catch(e){}
 }
 
-// Param-free so it stays safe as a direct click handler (examStartBtn/examRetakeBtn).
-function startExam(){ launchExam(EXAM_BLUEPRINT); }
-
-// Focused exam over only the leaf ids the student was weak on, 2 questions each.
+// Mini-exam = a normal exam with the weak topics/subtopics preselected on the start screen.
+// Routing through showPage('exam') (not a direct launch) is what fixes the blank-page bug.
 function startMiniExam(ids){
   if(!ids || !ids.length) return;
-  launchExam(ids.map(id=>({t:id,n:2})));
+  const valid=new Set(EXAM_LEAVES.map(l=>l.id));
+  const leaves=new Set();
+  ids.forEach(id=>{
+    if(SUBTOPICS[id]){ if(valid.has(id)) leaves.add(id); return; }
+    const topic=TOPICS.find(x=>x.id===id);   // older records may tag a parent topic id
+    if(topic) leavesOf(topic).forEach(s=>{ if(valid.has(s.id)) leaves.add(s.id); });
+  });
+  if(!leaves.size) return;
+  examSel=leaves;
+  miniExamNote='Mini-exam — your weak topics are preselected. Adjust below or press Start.';
+  showPage('exam');                // → showExamStart() renders the selector + count
 }
 
 function startExamTimer(){ stopExamTimer(); tickExamTimer(); examTimer=setInterval(tickExamTimer,1000); }
@@ -123,11 +154,66 @@ function exitExam(){
   showExamStart();
 }
 
+// refresh selected-count, Start-enabled state, and chip .on classes from examSel
+function syncExamSel(){
+  const n=EXAM_LEAVES.filter(l=>examSel.has(l.id)).reduce((s,l)=>s+l.n,0);
+  $('examCount').textContent=n;
+  $('examStartBtn').disabled=(n===0);
+  const tog=$('examSelToggle');
+  if(tog) tog.textContent=EXAM_LEAVES.every(l=>examSel.has(l.id))?'Clear all':'Select all';
+  const sel=$('examTopicSel'); if(!sel) return;
+  sel.querySelectorAll('.chip[data-leaf]').forEach(c=>c.classList.toggle('on',examSel.has(c.dataset.leaf)));
+  sel.querySelectorAll('.chip[data-topic]').forEach(c=>{
+    const leaves=(c.dataset.leaves||'').split(',').filter(Boolean);
+    const all=leaves.length && leaves.every(id=>examSel.has(id));
+    const some=leaves.some(id=>examSel.has(id));
+    c.classList.toggle('on',all);
+    c.classList.toggle('part',some && !all);
+  });
+}
+
+function renderExamSel(){
+  const sel=$('examTopicSel'); if(!sel) return;
+  sel.innerHTML='';
+  // group EXAM_LEAVES by topic, preserving practice-sheet order
+  const order=[], byTopic={};
+  EXAM_LEAVES.forEach(l=>{ if(!byTopic[l.topicId]){byTopic[l.topicId]=[];order.push(l.topicId);} byTopic[l.topicId].push(l); });
+  order.forEach(tid=>{
+    const leaves=byTopic[tid];
+    const topic=TOPICS.find(x=>x.id===tid);
+    const group=document.createElement('div'); group.className='exam-topicgroup';
+    const head=document.createElement('div'); head.className='chip'; head.dataset.topic=tid;
+    head.dataset.leaves=leaves.map(l=>l.id).join(',');
+    head.textContent=topic?topic.name:tid;
+    head.onclick=()=>{
+      const all=leaves.every(l=>examSel.has(l.id));
+      leaves.forEach(l=>{ if(all) examSel.delete(l.id); else examSel.add(l.id); });
+      syncExamSel();
+    };
+    group.appendChild(head);
+    if(leaves.length>1){
+      const subs=document.createElement('div'); subs.className='exam-subchips';
+      leaves.forEach(l=>{
+        const c=document.createElement('div'); c.className='chip sub'; c.dataset.leaf=l.id;
+        c.textContent=(leafName(l.id).split('· ')[1]||leafName(l.id));
+        c.onclick=()=>{ if(examSel.has(l.id)) examSel.delete(l.id); else examSel.add(l.id); syncExamSel(); };
+        subs.appendChild(c);
+      });
+      group.appendChild(subs);
+    }
+    sel.appendChild(group);
+  });
+  syncExamSel();
+}
+
 function showExamStart(){
   $('examStart').style.display='block';
   $('examRun').style.display='none';
   $('examResults').style.display='none';
-  $('examCount').textContent=EXAM_BLUEPRINT.reduce((s,b)=>s+b.n,0);
+  const note=$('examSelNote');
+  if(note){ note.textContent=miniExamNote; note.style.display=miniExamNote?'block':'none'; }
+  miniExamNote='';
+  renderExamSel();
   const last=state.examHistory[state.examHistory.length-1];
   $('examLast').innerHTML = last
     ? `Last exam: <b>${last.correct}/${last.total}</b> (${Math.round(last.correct/last.total*100)}%) · ${fmtDuration(last.durationMs)} · ${new Date(last.ts).toLocaleDateString()}`
@@ -258,6 +344,16 @@ function renderExamHistory(){
     wrap.appendChild(card);
   }
 }
+
+// select-all / clear for the start-screen selector (mirrors the practice page toggle)
+(function wireExamSelToggle(){
+  const btn=$('examSelToggle'); if(!btn) return;
+  btn.onclick=()=>{
+    const all=EXAM_LEAVES.every(l=>examSel.has(l.id));
+    examSel = all ? new Set() : new Set(EXAM_LEAVES.map(l=>l.id));
+    syncExamSel();
+  };
+})();
 
 function isExamRunning(){ return examRunning; }
 export { startExam, examNext, exitExam, showExamStart, renderExamHistory, isExamRunning };
